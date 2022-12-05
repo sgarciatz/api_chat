@@ -1,0 +1,585 @@
+openapi: 3.0.0
+info:
+  title: Chat API
+  description: This API is in charge of managing the actions relative to the user
+    data
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /messages:
+    put:
+      tags:
+      - message
+      summary: Modify a sent message.
+      description: Modify a sent message.
+      operationId: messagesPUT
+      parameters:
+      - name: messageId
+        in: query
+        description: The identifier of a sent message.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          example: 1002001111
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Message modified.
+                x-content-type: text/plain
+        "404":
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Message could not be found.
+                x-content-type: text/plain
+      x-swagger-router-controller: Message
+    post:
+      tags:
+      - message
+      summary: Send a message to an user
+      description: Send a message to an user
+      operationId: messagesPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Message sent.
+                x-content-type: text/plain
+        "404":
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Message could not be sent.
+                x-content-type: text/plain
+      x-swagger-router-controller: Message
+    delete:
+      tags:
+      - message
+      summary: Delete a sent message.
+      description: Delete a sent message.
+      operationId: messagesDELETE
+      parameters:
+      - name: messageId
+        in: query
+        description: The identifier of a sent message.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          example: 1002001111
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Message deleted.
+                x-content-type: text/plain
+        "404":
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Message could not be deleted.
+                x-content-type: text/plain
+      x-swagger-router-controller: Message
+  /messages/{userId}:
+    get:
+      tags:
+      - message
+      summary: Fetch all the messages sent to the user.
+      description: Fetch all the messages sent to the user.
+      operationId: messagesUserIdGET
+      parameters:
+      - name: userId
+        in: path
+        description: The identifier of the user querying the API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 100
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+                x-content-type: application/json
+        "404":
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: The user specified does not exist.
+                x-content-type: text/plain
+      x-swagger-router-controller: Message
+  /message/{userId}/filter-by-content/:
+    get:
+      tags:
+      - message
+      summary: Retrieve all messages given that its content matches the specified
+        string.
+      description: Retrieve all messages given that its content matches the specified
+        string.
+      operationId: messageUserIdFilter_by_contentGET
+      parameters:
+      - name: userId
+        in: path
+        description: The identifier of the user querying the API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "100"
+      - name: filter
+        in: query
+        description: The string used to match the desired message
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: What's up
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+                x-content-type: application/json
+        "404":
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: No messages containing "What's" were found.
+                x-content-type: text/plain
+      x-swagger-router-controller: Message
+  /message/{userId}/find-by-user:
+    get:
+      tags:
+      - message
+      summary: Retrieve all messages sent to or received from an specific user.
+      description: Retrieve all messages sent to or received from an specific user.
+      operationId: messageUserIdFind_by_userGET
+      parameters:
+      - name: userId
+        in: path
+        description: The identifier of the user querying the API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "100"
+      - name: secondUserId
+        in: query
+        description: The identifier of the user whose comments are wanted.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "200"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+                x-content-type: application/json
+        "404":
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Messages could not be retrieved
+                x-content-type: text/plain
+      x-swagger-router-controller: Message
+  /message/broadcast:
+    post:
+      tags:
+      - message
+      summary: Send a message to all known users.
+      description: Send a message to all known users.
+      operationId: messageBroadcastPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Message Broadcasted.
+                x-content-type: text/plain
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: The message could not be broadcasted.
+                x-content-type: text/plain
+      x-swagger-router-controller: Message
+  /voice-messages:
+    put:
+      tags:
+      - voice message
+      summary: Modify a sent voice message.
+      description: Modify a sent voice message.
+      operationId: voice_messagesPUT
+      parameters:
+      - name: voiceMessageId
+        in: query
+        description: The identifier of a sent voice message.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          example: 1002002222
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoiceMessage'
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Voice message modified.
+                x-content-type: text/plain
+        "404":
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Voice message could not be found.
+                x-content-type: text/plain
+      x-swagger-router-controller: VoiceMessage
+    post:
+      tags:
+      - voice message
+      summary: Send a voice message to an user.
+      description: Send a voice message to an user.
+      operationId: voice_messagesPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoiceMessage'
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Voice message sent.
+                x-content-type: text/plain
+        "404":
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Voice message could not be sent.
+                x-content-type: text/plain
+      x-swagger-router-controller: VoiceMessage
+    delete:
+      tags:
+      - voice message
+      summary: Delete a sent voice message.
+      description: Delete a sent voice message.
+      operationId: voice_messagesDELETE
+      parameters:
+      - name: voiceMessageId
+        in: query
+        description: The identifier of a sent voice message.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          example: 1002002222
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Voice message deleted.
+                x-content-type: text/plain
+        "404":
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Voice message could not be deleted.
+                x-content-type: text/plain
+      x-swagger-router-controller: VoiceMessage
+  /voice-messages/{userId}:
+    get:
+      tags:
+      - voice message
+      summary: Fetch all the voice messages sent to an user.
+      description: Fetch all the voice messages sent to an user.
+      operationId: voice_messagesUserIdGET
+      parameters:
+      - name: userId
+        in: path
+        description: The identifier of the user querying the API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 100
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VoiceMessage'
+                x-content-type: application/json
+        "404":
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: The user specified does not exist.
+                x-content-type: text/plain
+      x-swagger-router-controller: VoiceMessage
+  /voice-messages/{userId}/filter-by-content:
+    get:
+      tags:
+      - voice message
+      summary: Retrieve all messages given that its transcription matches the specified
+        string.
+      description: Retrieve all messages given that its transcription matches the
+        specified string.
+      operationId: voice_messagesUserIdFilter_by_contentGET
+      parameters:
+      - name: userId
+        in: path
+        description: The identifier of the user querying the API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "100"
+      - name: filter
+        in: query
+        description: The string used to match the desired message
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: What's
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VoiceMessage'
+                x-content-type: application/json
+        "404":
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: No messages containing "What's" were found.
+                x-content-type: text/plain
+      x-swagger-router-controller: VoiceMessage
+  /voice-message/{userId}/filter-by-user:
+    get:
+      tags:
+      - voice message
+      summary: Retrieve all messages sent or received to/from an user.
+      description: Retrieve all messages sent or received to/from an user.
+      operationId: voice_messageUserIdFilter_by_userGET
+      parameters:
+      - name: userId
+        in: path
+        description: The identifier of the user querying the API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "100"
+      - name: secondUserId
+        in: query
+        description: The identifier of the user whose comments are wanted.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: "200"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VoiceMessage'
+                x-content-type: application/json
+        "404":
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Messages could not be retrieved
+                x-content-type: text/plain
+      x-swagger-router-controller: VoiceMessage
+  /voice-messages/broadcast:
+    post:
+      tags:
+      - voice message
+      summary: Send a voice message to all known users.
+      description: Send a voice message to all known users.
+      operationId: voice_messagesBroadcastPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoiceMessage'
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Voice message Broadcasted
+                x-content-type: text/plain
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: The voice message could not be broadcasted.
+                x-content-type: text/plain
+      x-swagger-router-controller: VoiceMessage
+components:
+  schemas:
+    Message:
+      type: object
+      properties:
+        messageId:
+          type: integer
+          example: 1002001111
+        senderUserId:
+          type: integer
+          example: 100
+        receiverUserId:
+          type: string
+          example: "200"
+        messageContent:
+          type: string
+          example: What's up friend?
+        timestamp:
+          type: string
+          example: 2022-07-04*13:23:55
+      example:
+        senderUserId: 100
+        messageId: 1002001111
+        receiverUserId: "200"
+        messageContent: What's up friend?
+        timestamp: 2022-07-04*13:23:55
+      xml:
+        name: user
+    VoiceMessage:
+      type: object
+      properties:
+        voiceMessageId:
+          type: integer
+          example: 1002002222
+        senderUserId:
+          type: integer
+          example: 100
+        receiverUserId:
+          type: string
+          example: "200"
+        voiceMessageContent:
+          type: string
+          example: 4c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d6574
+        timestamp:
+          type: string
+          example: 2022-07-04*13:23:55
+      example:
+        senderUserId: 100
+        voiceMessageContent: 4c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d6574
+        voiceMessageId: 1002002222
+        receiverUserId: "200"
+        timestamp: 2022-07-04*13:23:55
+      xml:
+        name: user
