@@ -8,19 +8,49 @@ servers:
 - url: /
 paths:
   /messages:
+    post:
+      tags:
+      - message
+      summary: Send a message to an user
+      description: Send a message to an user
+      operationId: messagesPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Message sent.
+                x-content-type: text/plain
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Message could not be sent.
+                x-content-type: text/plain
+      x-swagger-router-controller: Message
+  /messages/{messageId}:
     put:
       tags:
       - message
       summary: Modify a sent message.
       description: Modify a sent message.
-      operationId: messagesPUT
+      operationId: messagesMessageIdPUT
       parameters:
       - name: messageId
-        in: query
+        in: path
         description: The identifier of a sent message.
         required: true
-        style: form
-        explode: true
+        style: simple
+        explode: false
         schema:
           type: integer
           example: 1002001111
@@ -47,48 +77,19 @@ paths:
                 example: Message could not be found.
                 x-content-type: text/plain
       x-swagger-router-controller: Message
-    post:
-      tags:
-      - message
-      summary: Send a message to an user
-      description: Send a message to an user
-      operationId: messagesPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Message'
-      responses:
-        "200":
-          description: OK
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: Message sent.
-                x-content-type: text/plain
-        "404":
-          description: Not Found
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: Message could not be sent.
-                x-content-type: text/plain
-      x-swagger-router-controller: Message
     delete:
       tags:
       - message
       summary: Delete a sent message.
       description: Delete a sent message.
-      operationId: messagesDELETE
+      operationId: messagesMessageIdDELETE
       parameters:
       - name: messageId
-        in: query
+        in: path
         description: The identifier of a sent message.
         required: true
-        style: form
-        explode: true
+        style: simple
+        explode: false
         schema:
           type: integer
           example: 1002001111
@@ -163,8 +164,8 @@ paths:
         style: simple
         explode: false
         schema:
-          type: string
-          example: "100"
+          type: integer
+          example: 100
       - name: filter
         in: query
         description: The string used to match the desired message
@@ -190,16 +191,16 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: No messages containing "What's" were found.
+                example: The user specified does not exist.
                 x-content-type: text/plain
       x-swagger-router-controller: Message
-  /message/{userId}/find-by-user:
+  /message/{userId}/filter-by-user:
     get:
       tags:
       - message
       summary: Retrieve all messages sent to or received from an specific user.
       description: Retrieve all messages sent to or received from an specific user.
-      operationId: messageUserIdFind_by_userGET
+      operationId: messageUserIdFilter_by_userGET
       parameters:
       - name: userId
         in: path
@@ -208,8 +209,8 @@ paths:
         style: simple
         explode: false
         schema:
-          type: string
-          example: "100"
+          type: integer
+          example: 100
       - name: secondUserId
         in: query
         description: The identifier of the user whose comments are wanted.
@@ -217,8 +218,8 @@ paths:
         style: form
         explode: true
         schema:
-          type: string
-          example: "200"
+          type: integer
+          example: 200
       responses:
         "200":
           description: OK
@@ -235,7 +236,7 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: Messages could not be retrieved
+                example: The user specified does not exist.
                 x-content-type: text/plain
       x-swagger-router-controller: Message
   /message/broadcast:
@@ -269,19 +270,49 @@ paths:
                 x-content-type: text/plain
       x-swagger-router-controller: Message
   /voice-messages:
+    post:
+      tags:
+      - voice message
+      summary: Send a voice message to an user.
+      description: Send a voice message to an user.
+      operationId: voice_messagesPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoiceMessage'
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Voice message sent.
+                x-content-type: text/plain
+        "400":
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Voice message could not be sent.
+                x-content-type: text/plain
+      x-swagger-router-controller: VoiceMessage
+  /voice-messages/{voiceMessageId}:
     put:
       tags:
       - voice message
       summary: Modify a sent voice message.
       description: Modify a sent voice message.
-      operationId: voice_messagesPUT
+      operationId: voice_messagesVoiceMessageIdPUT
       parameters:
       - name: voiceMessageId
-        in: query
+        in: path
         description: The identifier of a sent voice message.
         required: true
-        style: form
-        explode: true
+        style: simple
+        explode: false
         schema:
           type: integer
           example: 1002002222
@@ -308,48 +339,19 @@ paths:
                 example: Voice message could not be found.
                 x-content-type: text/plain
       x-swagger-router-controller: VoiceMessage
-    post:
-      tags:
-      - voice message
-      summary: Send a voice message to an user.
-      description: Send a voice message to an user.
-      operationId: voice_messagesPOST
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/VoiceMessage'
-      responses:
-        "200":
-          description: OK
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: Voice message sent.
-                x-content-type: text/plain
-        "404":
-          description: Not Found
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: Voice message could not be sent.
-                x-content-type: text/plain
-      x-swagger-router-controller: VoiceMessage
     delete:
       tags:
       - voice message
       summary: Delete a sent voice message.
       description: Delete a sent voice message.
-      operationId: voice_messagesDELETE
+      operationId: voice_messagesVoiceMessageIdDELETE
       parameters:
       - name: voiceMessageId
-        in: query
+        in: path
         description: The identifier of a sent voice message.
         required: true
-        style: form
-        explode: true
+        style: simple
+        explode: false
         schema:
           type: integer
           example: 1002002222
@@ -424,8 +426,8 @@ paths:
         style: simple
         explode: false
         schema:
-          type: string
-          example: "100"
+          type: integer
+          example: 100
       - name: filter
         in: query
         description: The string used to match the desired message
@@ -451,7 +453,7 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: No messages containing "What's" were found.
+                example: The user specified does not exist.
                 x-content-type: text/plain
       x-swagger-router-controller: VoiceMessage
   /voice-message/{userId}/filter-by-user:
@@ -469,8 +471,8 @@ paths:
         style: simple
         explode: false
         schema:
-          type: string
-          example: "100"
+          type: integer
+          example: 100
       - name: secondUserId
         in: query
         description: The identifier of the user whose comments are wanted.
@@ -478,8 +480,8 @@ paths:
         style: form
         explode: true
         schema:
-          type: string
-          example: "200"
+          type: integer
+          example: 200
       responses:
         "200":
           description: OK
@@ -496,7 +498,7 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: Messages could not be retrieved
+                example: The user specified does not exist.
                 x-content-type: text/plain
       x-swagger-router-controller: VoiceMessage
   /voice-messages/broadcast:
@@ -541,8 +543,8 @@ components:
           type: integer
           example: 100
         receiverUserId:
-          type: string
-          example: "200"
+          type: integer
+          example: 200
         messageContent:
           type: string
           example: What's up friend?
@@ -552,7 +554,7 @@ components:
       example:
         senderUserId: 100
         messageId: 1002001111
-        receiverUserId: "200"
+        receiverUserId: 200
         messageContent: What's up friend?
         timestamp: 2022-07-04*13:23:55
       xml:
@@ -567,8 +569,8 @@ components:
           type: integer
           example: 100
         receiverUserId:
-          type: string
-          example: "200"
+          type: integer
+          example: 200
         voiceMessageContent:
           type: string
           example: 4c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d6574
@@ -579,7 +581,7 @@ components:
         senderUserId: 100
         voiceMessageContent: 4c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d6574
         voiceMessageId: 1002002222
-        receiverUserId: "200"
+        receiverUserId: 200
         timestamp: 2022-07-04*13:23:55
       xml:
         name: user

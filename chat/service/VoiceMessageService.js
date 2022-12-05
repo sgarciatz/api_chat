@@ -1,5 +1,61 @@
 'use strict';
 
+const users = [ {
+  "firstName" : "Juan",
+  "lastName" : "Díaz",
+  "password" : "password1234",
+  "servers" : [ 100, 200 ],
+  "phone" : "123456789",
+  "userId" : 100,
+  "subscriptionTier" : "HIGH-END Hardware",
+  "email" : "juanito.diaz@email.com",
+  "friends" : [ 200, 300 ],
+  "username" : "Juanito_2000",
+  "videogames" : [ 100, 200, 300 ]
+}, {
+  "firstName" : "Paco",
+  "lastName" : "Hernández",
+  "password" : "password1234",
+  "servers" : [ 300 ],
+  "phone" : "657098334",
+  "userId" : 200,
+  "subscriptionTier" : "MID-END Hardware",
+  "email" : "paco.hernandez@email.com",
+  "friends" : [ 100 ],
+  "username" : "pakito_123",
+  "videogames" : [ 100, 300 ]
+}, {
+  "firstName" : "Daniel",
+  "lastName" : "Cambero",
+  "password" : "password1234",
+  "servers" : [ ],
+  "phone" : "452670534",
+  "userId" : 300,
+  "subscriptionTier" : "MID-END Hardware",
+  "email" : "daniel.cambero@email.com",
+  "friends" : [ 100 ],
+  "username" : "dani_crk",
+  "videogames" : [ 100 ]
+} ];
+
+const voiceMessages = [
+  {
+    "senderUserId" : 100,
+    "voiceMessageContent": "4c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d6574",
+    "transcripcion": "What's up friend?",
+    "voiceMessageId" : 1002002222,
+    "receiverUserId" : 200,
+    "timestamp" : "2022-07-04*13:23:55"
+  }, 
+  {
+    "senderUserId" : 100,
+    "voiceMessageContent" : "4c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d6574",
+    "transcripcion": "Hey, life's good man.",
+    "voiceMessageId" : 1002002222,
+    "receiverUserId" : 200,
+    "timestamp" : "2022-07-04*13:23:55"
+  }
+]
 
 /**
  * Retrieve all messages sent or received to/from an user.
@@ -9,28 +65,20 @@
  * secondUserId String The identifier of the user whose comments are wanted.
  * returns List
  **/
-exports.voice_messageUserIdFilter_by_userGET = function(userId,secondUserId) {
+exports.voice_messageUserIdFilter_by_userGET = function(secondUserId, userId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = [ {
-  "senderUserId" : 100,
-  "voiceMessageContent" : "4c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d6574",
-  "voiceMessageId" : 1002002222,
-  "receiverUserId" : "200",
-  "timestamp" : "2022-07-04*13:23:55"
-}, {
-  "senderUserId" : 100,
-  "voiceMessageContent" : "4c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d6574",
-  "voiceMessageId" : 1002002222,
-  "receiverUserId" : "200",
-  "timestamp" : "2022-07-04*13:23:55"
-} ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
-  });
+  var examples = {};
+  if (users.some(user => user.userId === userId) && users.some(user => user.userId === secondUserId)) {
+    const filtered_msgs = voiceMessages.filter(message => ( (message.receiverUserId === userId || message.senderUserId === userId)
+                                                      && (message.receiverUserId === secondUserId || message.senderUserId === secondUserId)
+                                                      ));
+    examples['application/json'] = filtered_msgs;                                          
+    resolve(examples[Object.keys(examples)[0]]);
+  } else {
+    examples['text/plain'] = "The user specified does not exist.";
+    reject(examples[Object.keys(examples)[0]]);
+  }
+});
 }
 
 
@@ -48,27 +96,8 @@ exports.voice_messagesBroadcastPOST = function(body) {
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
-      resolve();
-    }
-  });
-}
-
-
-/**
- * Delete a sent voice message.
- * Delete a sent voice message.
- *
- * voiceMessageId Integer The identifier of a sent voice message.
- * returns String
- **/
-exports.voice_messagesDELETE = function(voiceMessageId) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "Voice message deleted.";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+      examples['text/plain'] = "The voice message could not be broadcasted.";
+      reject(examples[Object.keys(examples)[0]]);
     }
   });
 }
@@ -84,32 +113,12 @@ exports.voice_messagesDELETE = function(voiceMessageId) {
 exports.voice_messagesPOST = function(body) {
   return new Promise(function(resolve, reject) {
     var examples = {};
-    examples['application/json'] = "Voice message sent.";
-    if (Object.keys(examples).length > 0) {
+    if (users.some(user => user.userId === body.receiverUserId)) {
+      examples['application/json'] = "Voice message sent.";
       resolve(examples[Object.keys(examples)[0]]);
     } else {
-      resolve();
-    }
-  });
-}
-
-
-/**
- * Modify a sent voice message.
- * Modify a sent voice message.
- *
- * body VoiceMessage  (optional)
- * voiceMessageId Integer The identifier of a sent voice message.
- * returns String
- **/
-exports.voice_messagesPUT = function(body,voiceMessageId) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "Voice message modified.";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+      examples['application/json'] = "Voice message could not be sent.";
+      reject(examples[Object.keys(examples)[0]]);
     }
   });
 }
@@ -123,26 +132,18 @@ exports.voice_messagesPUT = function(body,voiceMessageId) {
  * filter String The string used to match the desired message
  * returns List
  **/
-exports.voice_messagesUserIdFilter_by_contentGET = function(userId,filter) {
+exports.voice_messagesUserIdFilter_by_contentGET = function(filter, userId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
-    examples['application/json'] = [ {
-  "senderUserId" : 100,
-  "voiceMessageContent" : "4c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d6574",
-  "voiceMessageId" : 1002002222,
-  "receiverUserId" : "200",
-  "timestamp" : "2022-07-04*13:23:55"
-}, {
-  "senderUserId" : 100,
-  "voiceMessageContent" : "4c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d6574",
-  "voiceMessageId" : 1002002222,
-  "receiverUserId" : "200",
-  "timestamp" : "2022-07-04*13:23:55"
-} ];
-    if (Object.keys(examples).length > 0) {
+    if (users.some(user => user.userId === userId)) {
+      const filtered_msgs = voiceMessages.filter(message => (message.receiverUserId === userId 
+                                                        || message.senderUserId === userId) 
+                                                        && message.transcripcion.toUpperCase().includes(filter.toUpperCase()));
+      examples['application/json'] = filtered_msgs;                                          
       resolve(examples[Object.keys(examples)[0]]);
     } else {
-      resolve();
+      examples['text/plain'] = "The user specified does not exist.";
+      reject(examples[Object.keys(examples)[0]]);
     }
   });
 }
@@ -158,23 +159,55 @@ exports.voice_messagesUserIdFilter_by_contentGET = function(userId,filter) {
 exports.voice_messagesUserIdGET = function(userId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
-    examples['application/json'] = [ {
-  "senderUserId" : 100,
-  "voiceMessageContent" : "4c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d6574",
-  "voiceMessageId" : 1002002222,
-  "receiverUserId" : "200",
-  "timestamp" : "2022-07-04*13:23:55"
-}, {
-  "senderUserId" : 100,
-  "voiceMessageContent" : "4c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d6574",
-  "voiceMessageId" : 1002002222,
-  "receiverUserId" : "200",
-  "timestamp" : "2022-07-04*13:23:55"
-} ];
-    if (Object.keys(examples).length > 0) {
+    if (users.some(users => users.userId === userId)) {
+      examples['application/json'] = voiceMessages.filter(message => (message.receiverUserId === userId) || (message.senderUserId === userId));
       resolve(examples[Object.keys(examples)[0]]);
     } else {
-      resolve();
+      examples['text/plain'] = "The user specified does not exist.";
+      reject(examples[Object.keys(examples)[0]]);
+    }
+  });
+}
+
+
+/**
+ * Delete a sent voice message.
+ * Delete a sent voice message.
+ *
+ * voiceMessageId Integer The identifier of a sent voice message.
+ * returns String
+ **/
+exports.voice_messagesVoiceMessageIdDELETE = function(voiceMessageId) {
+  return new Promise(function(resolve, reject) {
+    var examples = {};
+    if (voiceMessages.some(message => message.voiceMessageId === voiceMessageId)) {
+      examples['text/plain'] = "Voice message deleted.";
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      examples['text/plain'] = "Voice message could not be deleted.";
+      reject(examples[Object.keys(examples)[0]]);
+    }
+  });
+}
+
+
+/**
+ * Modify a sent voice message.
+ * Modify a sent voice message.
+ *
+ * body VoiceMessage  (optional)
+ * voiceMessageId Integer The identifier of a sent voice message.
+ * returns String
+ **/
+exports.voice_messagesVoiceMessageIdPUT = function(body,voiceMessageId) {
+  return new Promise(function(resolve, reject) {
+    var examples = {};
+    if (voiceMessages.some(message => message.voiceMessageId === messageId)) {
+      examples['text/plain'] = "Voice message modified.";
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      examples['text/plain'] = "Voice message could not be found.";
+      reject(examples[Object.keys(examples)[0]]);
     }
   });
 }
