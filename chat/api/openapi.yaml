@@ -111,7 +111,7 @@ paths:
                 example: Message could not be deleted.
                 x-content-type: text/plain
       x-swagger-router-controller: Message
-  /messages/{userId}:
+  /messages/user/{userId}:
     get:
       tags:
       - message
@@ -147,7 +147,7 @@ paths:
                 example: The user specified does not exist.
                 x-content-type: text/plain
       x-swagger-router-controller: Message
-  /message/{userId}/filter-by-content/:
+  /messages/{userId}/filter-by-content/:
     get:
       tags:
       - message
@@ -194,7 +194,7 @@ paths:
                 example: The user specified does not exist.
                 x-content-type: text/plain
       x-swagger-router-controller: Message
-  /message/{userId}/filter-by-user:
+  /messages/{userId}/filter-by-user:
     get:
       tags:
       - message
@@ -239,7 +239,7 @@ paths:
                 example: The user specified does not exist.
                 x-content-type: text/plain
       x-swagger-router-controller: Message
-  /message/broadcast:
+  /messages/broadcast:
     post:
       tags:
       - message
@@ -373,7 +373,7 @@ paths:
                 example: Voice message could not be deleted.
                 x-content-type: text/plain
       x-swagger-router-controller: VoiceMessage
-  /voice-messages/{userId}:
+  /voice-messages/user/{userId}:
     get:
       tags:
       - voice message
@@ -456,7 +456,7 @@ paths:
                 example: The user specified does not exist.
                 x-content-type: text/plain
       x-swagger-router-controller: VoiceMessage
-  /voice-message/{userId}/filter-by-user:
+  /voice-messages/{userId}/filter-by-user:
     get:
       tags:
       - voice message

@@ -202,7 +202,7 @@ exports.voice_messagesVoiceMessageIdDELETE = function(voiceMessageId) {
 exports.voice_messagesVoiceMessageIdPUT = function(body,voiceMessageId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
-    if (voiceMessages.some(message => message.voiceMessageId === messageId)) {
+    if (voiceMessages.some(message => message.voiceMessageId === voiceMessageId)) {
       examples['text/plain'] = "Voice message modified.";
       resolve(examples[Object.keys(examples)[0]]);
     } else {
