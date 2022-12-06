@@ -1,0 +1,184 @@
+{
+	"info": {
+		"_postman_id": "7c76b48b-b7c3-4a22-bfc2-f65b86b71dfa",
+		"name": "chat_test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get user messages",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:20084/messages/user/100",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "20084",
+					"path": [
+						"messages",
+						"user",
+						"100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Broadcast message",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"senderUserId\": 100,\n  \"messageId\": 1002001111,\n  \"receiverUserId\": 200,\n  \"messageContent\": \"What's up friend?\",\n  \"timestamp\": \"2022-07-04*13:23:55\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:20084/messages/broadcast",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "20084",
+					"path": [
+						"messages",
+						"broadcast"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modify message",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"senderUserId\": 100,\n  \"messageId\": 1002001111,\n  \"receiverUserId\": 200,\n  \"messageContent\": \"What's up friend?\",\n  \"timestamp\": \"2022-07-04*13:23:55\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:20084/messages/1002001111",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "20084",
+					"path": [
+						"messages",
+						"1002001111"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send voice message",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"senderUserId\": 100,\n  \"voiceMessageContent\": \"4c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d65744c6f72656d20697073756d20646f6c6f722073697420616d6574\",\n  \"voiceMessageId\": 1002002222,\n  \"receiverUserId\": 200,\n  \"timestamp\": \"2022-07-04*13:23:55\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:20084/voice-messages",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "20084",
+					"path": [
+						"voice-messages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete voice message",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:20084/voice-messages/1002002222",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "20084",
+					"path": [
+						"voice-messages",
+						"1002002222"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Filter voice messages by content",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:20084/voice-messages/100/filter-by-content?filter=What%27s",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "20084",
+					"path": [
+						"voice-messages",
+						"100",
+						"filter-by-content"
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "What%27s"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
